@@ -24,4 +24,4 @@
 
 > 발표 내용을 정리한 자료입니다.
 
-[AWS Database Service] (https://www.notion.so/AWS-DATABASE-SERVICE-c02c3046d7c9442881d0fc09272ceb10?pvs=4)
+[AWS Database Service](https://www.notion.so/AWS-DATABASE-SERVICE-c02c3046d7c9442881d0fc09272ceb10?pvs=4)

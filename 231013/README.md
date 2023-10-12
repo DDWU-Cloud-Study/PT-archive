@@ -1,11 +1,7 @@
 # Virtual Private Cloud
 
-# vpc란 무엇인가?
-
-<aside>
-<img src="/icons/emoji-grinning-smiling-eyes_gray.svg" alt="/icons/emoji-grinning-smiling-eyes_gray.svg" width="40px" /> **Amazon Virtual Private Cloud(Amazon VPC)**를 사용하면 정의한 논리적으로 격리된 **가상 네트워크**에서 AWS 리소스를 시작할 수 있습니다. 이 가상 네트워크는 AWS의 확장 가능한 인프라를 사용한다는 이점과 함께 고객의 자체 데이터 센터에서 운영하는 기존 네트워크와 매우 유사합니다.
-
-</aside>
+## vpc란 무엇인가?
+**Amazon Virtual Private Cloud(Amazon VPC)**를 사용하면 정의한 논리적으로 격리된 **가상 네트워크**에서 AWS 리소스를 시작할 수 있습니다. 이 가상 네트워크는 AWS의 확장 가능한 인프라를 사용한다는 이점과 함께 고객의 자체 데이터 센터에서 운영하는 기존 네트워크와 매우 유사합니다.
 
 ## VPC 특징
 
@@ -14,33 +10,22 @@
 - 부여된 IP 대역을 분할하여 사용 가능
 - 리전 단위이다.
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/d2b93158-bf01-4510-b89f-87d8481e8693/Untitled.png)
-
-다음 그림은 VPC의 예시를 보여주는 다이어그램이다. VPC에는 리전의 가용존에 하나의 서브넷이 존재하며 각 서브넷에는 EC2 인스턴스와 VPC 리소스와 인터넷 간의 통신을 허용하는 인터넷 게이트웨이가 있다.
-
 예전 AWS는 다른 사용자와 함께 사용하는 EC2-classic 버전이었지만, 현재 AWS는 기본적으로 VPC를 생성해준다. 따라서 특별한 상황이 아니라면 번거롭게 직접 네트워크 환경을 구축하지 않아도 된다.
 
 # 기본 VPC 구성 요소
-
-- [서브넷](https://www.notion.so/VPC-1-810645a825144e029a064e14e446c881?pvs=21)
 - 인터넷 게이트웨이
 - ACL / 보안 그룹
 - 라우트 테이블
 - NAT instance / NAT Gateway
 - Bastion Host
 - VPC EndPoint
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/c4c31939-c5cc-460b-afe6-e4ef025c92fc/Untitled.png)
-
-- IPv4 CIDR 크기가 16인 블록을 필수적으로 가진다(172.31.0.0/16) → 2^(32-16) = 65536개의 IP사용가능
+- - IPv4 CIDR 크기가 16인 블록을 필수적으로 가진다(172.31.0.0/16) → 2^(32-16) = 65536개의 IP사용가능
 - 각 가용 영역 크기 /20의 개본 서브넷 생성한다. → 2^(32-20) = 4096개의 IP사용가능
 - 인터넷 게이트웨이를 만들어 VPC에 연결한다.
 - 기본 라우팅 테이블에 모든 트래픽(0.0.0.0/0)이 인터넷 게이트 웨이로 전달되는 경로를 추가한다.
 - 기본 보안 그룹을 만들어 기본 VPC에 연결한다.
 - 네트워크 ACL을 생성해 기본 VPC에 연결한다.
 - AWS 계절에서 설정된 기본 DHCP 옵션을 기본 VPC에 연결한다.
-
-다음 표는 기본 VPC에 대한 기본 라우팅 테이블의 경로를 보여줍니다.
 
 <aside>
 💡 가용영역?
@@ -57,8 +42,6 @@ AWS 리전에 중복 전원, 네트워킹 및 연결이 있는 하나 이상의 
 </aside>
 
 클라우드의 자원들은 기본적으로 특정 네트워크 위에서 생성되며, 이를 접근하기 위해 **프라이빗 IP** 을 가진다. 즉, VPC의 CIDR범위 안에 적절한 IP를 가진다.
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/8d7087f8-d198-45cc-87de-60d7ec3a7f2f/Untitled.png)
 
 예를 들어 192.168.0.0/24 CIDR블록에서 생성된 EC2 인스턴스는 192.168.0.127을 받는다. 여기서 할당 가능한 IP가 소진되면 리소스 만들 수 없어서 적절한 크기의 VPC를 만들어야 한다. 하나의 VPC 최대 크기는 16이며, 인터넷 연결이 필요한 경우 반드시 **사설망 대역**을 사용해야 한다. 기본 규칙이 VPC의 CIDR블럭에 점유되기 때문에 같은 주소를 가진 (인터넷 접속이 가능한) 타IP 주소 접근하는 게 어렵다. ~~그리고 사설망의 블럭을 사용해도 다른 VPC와 통신할 때 CIDR이 겹치는 부분과 통신할 수 없다.~~
 
@@ -86,8 +69,6 @@ aws ec2 describe-vpcs --vpc-id vpc-1a2b3c4d --query Vpcs[*].CidrBlock --output t
 - 아이피 범위를 RFC1918이라는 사설 아이피 대역에 맞추어 구축해야 한다.
 - 독립된 네트워크이기 때문에 CIDR가 같거나 겹쳐도 생성이 가능. 하지만 다수의 VPC를 함께 사용 시 IP대역이 겹치면 문제 발생 가능. → 왜????
 - 보조 IPv4 CIDR 블록을 연결할 수도 있다. (주 CIDR블록이랑 대역 겹치면 안됨)
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/fbed4491-8d51-4f3c-b0df-0b02be7735a0/Untitled.png)
 
 ---
 
@@ -124,8 +105,6 @@ aws ec2 describe-vpcs --vpc-id vpc-1a2b3c4d --query Vpcs[*].CidrBlock --output t
 - **`프라이빗 서브넷`** - 서브넷에 인터넷 게이트웨이로 직접 연결되는 경로가 없다. 프라이빗 서브넷의 리소스에는 퍼블릭 인터넷에 액세스하기 위해 NAT 디바이스가 필요. 외부 노출이 필요 없는 DB, 로직 서버 인프라.
 - **`VPN 전용 서브넷`** - 서브넷에 가상 프라이빗 게이트웨이를 통해 Site-to-Site VPN 연결으로 연결되는 경로가 있다. 서브넷에는 인터넷 게이트웨이에 대한 경로가 없다.
 - **`격리된 서브넷`** - 서브넷에 VPC 외부 대상에 대한 경로가 없다 격리된 서브넷의 리소스는 동일한 VPC의 다른 리소스와만 서로 액세스할 수 있습니다.
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/0240ce72-4875-4710-8185-8d2edf5b50f7/Untitled.png)
 
 A는 인터넷 게이트웨이에 연결된 퍼블릭 서브넷이고, B는 가상 프라이버시 게이트웨이로 연결된 VPN 전용 서브넷이다.
 
@@ -167,13 +146,7 @@ VPC를 만들면 기본 라우팅 테이블이 자동으로 생성된다. 서브
 ---
 
 # 외부 연결
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/0e4b7b5b-711b-47bf-a878-e6a06f9539a2/Untitled.png)
-
 ## 인터넷 게이트웨이(IGA)
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/a3116c94-5296-4fef-aa51-8271961ef0d9/Untitled.png)
-
 - 0.0.0.0/0으로 연결되는 IGA는 인터넷과 연결되어 있고 이를 퍼블릭 서브넷.
 - VPC에서 생성된 리소스들은 기본적으로 인터넷 사용이 불가능함.
 - 인스턴스가 인터넷과 통신하려면 퍼블릭 주소가 필요
@@ -204,8 +177,6 @@ VPC를 만들면 기본 라우팅 테이블이 자동으로 생성된다. 서브
     - 동적 ip주소 할당은 불가.
     - 프라이빗 NAT 게이트웨이에서 인터넷 게이트웨이로 트래픽을 라우팅하는 경우 인터넷 게이트웨이가 트래픽을 삭제.
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/55ca7709-bdb2-49ec-a057-a650a7cc7e8e/Untitled.png)
-
 - 프라이빗 서브넷이 인터넷과 통신하기 위한 아웃바인드 인스턴스(동시에 인바운드도 막아줌)
 - 외부에서 요청되는 인바운드가 없어도 펌웨어 및 업데이트 때문에 사용해야 할 때가 있음.
 - 프라이빗 서브넷 내부 인스턴스를 대신해서 통신하는 것이기에 퍼블릭 서브넷에 있어야 함.
@@ -227,17 +198,11 @@ VPC, VPN 연결 및 AWS Direct Connect 연결 간에 트래픽을 라우팅하�
 - 퍼블릭 서브넷에 위치
 
 ## VCP 피어링
-
 VPC 피어링 연결은 비공개적으로 두 VPC 간에 트래픽을 라우팅할 수 있도록 하기 위한 두 VPC 사이의 네트워킹 연결한다. 동일한 네트워크 내에 있는 것처럼 서로 통신할 수 있고, 인터넷은 통하지 않는다.
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/3ae7f48e-9386-4279-977a-9b80827f4876/Untitled.png)
 
 ---
 
 ## DHCP 옵션셋
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/ab6ab902-5e55-4aca-9ffb-489774a214cb/Untitled.png)
-
 - 리전의 각 VPC는 다음과 같은 네트워크 구성을 포함하는 동일한 기본 DHCP 옵션 세트를 사용
     - 도메인 이름
     - 도메인 이름 서버
@@ -254,10 +219,7 @@ VPC 피어링 연결은 비공개적으로 두 VPC 간에 트래픽을 라우팅
 
 ## 보안
 
-### 보안그룹
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/f3930546-5c04-4bda-ab83-d4077ba33971/Untitled.png)
-
+## 보안그룹
 보안 그룹(SG)은 연결된 리소스에 도달하고 나갈 수 있는 트래픽을 제어한다. VPC를 생성할 경우 VPC는 기본 보안 그룹과 함께 제공되며, 요금은 나가지 않는다.
 
 - 보안그룹은 모든 허용을 차단하기 때문에 필요한 설정을 허용해야 함.
@@ -266,9 +228,6 @@ VPC 피어링 연결은 비공개적으로 두 VPC 간에 트래픽을 라우팅
 - 보안 그룹은 상태가 저장된다. → 처음 인바운드 된 트래픽이 아웃바운드 규칙 없이 인스턴스를 떠날 수 있다.
 
 ## ACL
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/2be15c52-7235-41c4-949c-684add48adab/74133550-22db-473c-b591-bbf39f7b1a70/Untitled.png)
-
 <aside>
 💡 *네트워크 액세스 제어 목록(ACL)*은 서브넷 수준에서 특정 인바운드 또는 아웃바운드 트래픽을 허용하거나 거부합니다. VPC에 대한 기본 네트워크 ACL을 사용하거나 보안 그룹에 대한 규칙과 유사한 규칙을 사용하여 VPC에 대한 사용자 지정 네트워크 ACL을 생성하여 VPC에 보안 계층을 추가할 수 있습니다.
 
